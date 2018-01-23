@@ -3,6 +3,7 @@
  */
 const path = require('path')
 const webpack = require('webpack');
+const MinifyPlugin = require("babel-minify-webpack-plugin");
 const PATHS = {
     app: path.resolve(__dirname, 'FrontEnd'),
     build: path.resolve(__dirname, 'Public/js')
@@ -12,7 +13,7 @@ module.exports = {
     entry: {
         app: PATHS.app + '/index.js'
     },
-    devtool: 'cheap-module-eval-source-map',
+    // devtool: 'cheap-module-eval-source-map',
     devServer: {
         contentBase: PATHS.build
     },
@@ -65,5 +66,9 @@ module.exports = {
             'window.jQuery': 'jquery',
             Popper: ['popper.js', 'default']
         }),
+        new webpack.DefinePlugin({
+            'process.env.NODE_ENV': JSON.stringify('production')
+        }),
+        new MinifyPlugin()
     ]
 }
