@@ -121,6 +121,21 @@ router.post(`${basePath}/product/done`,middlewares.storeCheck, middlewares.produ
         HandleApiError(e, res)
     }
 });
+/*
+* Route to download report
+* */
+router.get(`${basePath}/report/:storeId`,middlewares.storeCheck, async (req, res) => {
+    try {
+        let productLogs = await ProductLogModel.getDataForKitchenDisplay(req.store._id);
+        let report = productLogs.reduce((accumulatedtext, productLog) => {
+            return accumulatedtext = accumulatedtext + `${productLog.productName}\t${productLog.produced}\t${productLog.prediction}\n`
+        }, 'Dish Name\tProduced\tPredicted\n');
+        res.writeHead(200, {'Content-Type': 'application/force-download','Content-disposition':'attachment; filename=report.tsv'});
+        res.end(report)
+    } catch (e) {
+        HandleApiError(e, res)
+    }
+});
 
 
 module.exports = router;
