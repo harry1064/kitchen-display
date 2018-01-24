@@ -8,7 +8,7 @@ let HandleApiError = require('../Utility/HandleApiError');
 module.exports = async function (req, res, next) {
     try {
         let body = req.body;
-        let storeId = body.storeId;
+        let storeId = body.storeId ? body.storeId: req.params.storeId;
         let store = await StoreModel.getStore(storeId);
         if (!store) {
             res.json({
@@ -16,6 +16,7 @@ module.exports = async function (req, res, next) {
                 message: `Store with id ${storeId} does not exist.`
             });
         } else {
+            req.store = store;
             next()
         }
     } catch (e) {
