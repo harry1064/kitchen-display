@@ -62,9 +62,7 @@ router.post(`${basePath}/product/prediction`, middlewares.storeCheck, middleware
         let productLog = await ProductLogModel.getProductLog(storeId, productId);
         if (productLog) {
             productLog = await ProductLogModel.updateProductLog(storeId, productId, {
-                produced: 0,
-                prediction: prediction,
-                quantity: 0
+                prediction: prediction
             })
         } else {
             productLog = await ProductLogModel.createProductLog({
