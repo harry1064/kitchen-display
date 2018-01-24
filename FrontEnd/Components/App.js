@@ -49,13 +49,15 @@ class App extends React.Component {
         })
     }
 
-
     render() {
         return (
             <div className="container-fluid">
                 <div className="row">
                     <LoadingSpinner showLoader={this.state.showLoader}/>
-                    <div className="col-md-3"></div>
+                    <div className="col-md-3">
+                        <a href={`/api/v1/store/report/${this.state.store._id}`} className="team-delete"
+                        >Download Report</a>
+                    </div>
                     <div className="col-md-6">
                         <table className="table table-sm">
                             <thead>
