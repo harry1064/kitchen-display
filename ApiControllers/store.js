@@ -8,6 +8,7 @@ let HandleApiError = require('../Utility/HandleApiError');
 let ProductLogModel = require('../Models').ProductLogModel;
 let StoreModel = require('../Models').StoreModel;
 let middlewares = require('../Middlewares');
+let createNameSpaceForStore = require('../Libs/CreateNameSpace').createNameSpaceForStore;
 let sendEventToSocketNameSpace = require('../Libs/SendEventToNameSpace').sendEventToNameSpace;
 /*
  * To get all store
@@ -32,6 +33,10 @@ router.post(basePath, async (req, res) => {
     try {
         let body = req.body;
         let store = await StoreModel.createStore(body);
+        if (router.io) {
+            createNameSpaceForStore(router.io, store);
+            console.log(`Socket name space created for storeId ${store._id}`)
+        }
         res.json({
             success: true,
             message: 'Store created successfully',
