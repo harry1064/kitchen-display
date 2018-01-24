@@ -73,6 +73,9 @@ router.post(`${basePath}/product/prediction`, middlewares.storeCheck, middleware
                 quantity: 0
             })
         }
+        if (router.io) {
+            sendEventToSocketNameSpace(router.io, productLog.store);
+        }
         res.json({
             success: true,
             message: 'Predicted value set successfully'
