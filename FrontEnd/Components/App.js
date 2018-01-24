@@ -41,9 +41,9 @@ class App extends React.Component {
                     <td>{productLog.quantity}</td>
                     <td>{productLog.produced}</td>
                     <td>{productLog.prediction}</td>
-                    <td><a href="#" className="team-delete"
+                    <td><button className="btn btn-link" disabled={productLog.quantity === 0}
                            onClick={this._doneButtonClicked.bind(this, productLog.productId)}
-                    >DONE</a></td>
+                    >DONE</button></td>
                 </tr>
             )
         })
