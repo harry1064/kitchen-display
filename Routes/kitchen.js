@@ -9,9 +9,13 @@ router.get('/:storeId', async (req, res) => {
     let store;
     try {
         store = await StoreModel.getStore(req.params.storeId);
-        res.render('index', {
-            store: store
-        })
+        if (store) {
+            res.render('index', {
+                store: store
+            })
+        } else {
+            res.render('notfound')
+        }
     } catch (e) {
         res.render('notfound')
     }
