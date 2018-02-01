@@ -6,6 +6,7 @@ import AppStateController from '../Controller/AppStateController';
 import LoadingSpinner from './loader'
 import Order from './Order'
 import AddProduct from './AddProduct'
+import Prediction from './Prediction'
 
 class App extends React.Component {
     constructor(props) {
@@ -29,6 +30,7 @@ class App extends React.Component {
                     </div>
                     {this.state.path.toLowerCase() === 'order' && <Order appStateController={this.controller}/>}
                     {this.state.path.toLowerCase() === 'product' && <AddProduct appStateController={this.controller}/>}
+                    {this.state.path.toLowerCase() === 'prediction' && <Prediction appStateController={this.controller}/>}
                     <div className="col-md-3"></div>
                 </div>
             </div>
