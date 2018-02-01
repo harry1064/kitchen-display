@@ -6,6 +6,7 @@ let express = require('express');
 let router = express.Router();
 let basePath = '/product';
 let HandleApiError = require('../Utility/HandleApiError');
+let sendEventToAllNamespaces = require('../Libs/SendEventToAllNamespaces').sendEventToAllNameSpaces;
 
 // To get Products
 router.get(basePath, async (req, res) => {
@@ -25,9 +26,21 @@ router.get(basePath, async (req, res) => {
 router.post(basePath, async (req, res) => {
     try {
         let body = req.body;
-        let product = await ProductModel.createProduct(body);
+        let product = await ProductModel.checkProductForName(body.name);
+        if (product) {
+            res.json({
+                success: false,
+                message: `Product with name ${body.name} already exist`
+            });
+            return;
+        }
+        product = await ProductModel.createProduct(body);
+        if (router.io) {
+            let products = await ProductModel.getAllProducts();
+            sendEventToAllNamespaces(router.io, products)
+        }
         res.json({
-            success: true,
+            success: false,
             product: product,
             message: 'Product created successfully'
         })
