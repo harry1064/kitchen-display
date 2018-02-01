@@ -29,14 +29,12 @@ class AppStateController {
             });
         }).bind(this));
         socket.on('product-log-data', ((data) => {
-            console.log(data);
             this._app.setState({
-                productLogs: data
+                productLogs: this._transformProductLogs(data)
             })
         }).bind(this));
 
         socket.on('products', ((data) => {
-            console.log(data);
             this._app.setState({
                 products: data
             })
@@ -59,6 +57,10 @@ class AppStateController {
 
     getProducts() {
         return this._app.state.products;
+    }
+
+    getProductLogs() {
+        return this._app.state.productLogs;
     }
 
     setOrder(order) {
@@ -123,6 +125,49 @@ class AppStateController {
                 }
             });
         });
+    }
+
+    setPrediction(predictionData) {
+        let data = {
+            storeId: this.getStore()._id,
+            productId: predictionData.productId,
+            prediction: predictionData.prediction
+        };
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url: '/api/v1/store/product/prediction',
+                type: 'post',
+                dataType: 'json',
+                data: data,
+                success: function (data) {
+                    if (data.success) {
+                        resolve(data);
+                    }
+                    else {
+                        reject(new Error(data.message || 'Something' +
+                            ' went wrong. Please try again in a while.'))
+                    }
+                },
+                error: function (err) {
+                    reject(new Error('Something went wrong. Please try again' +
+                        ' in a while.'))
+                }
+            });
+        });
+    }
+
+    _transformProductLogs(productLogs) {
+        let transformedLogs = {};
+        productLogs.forEach((log) => {
+            transformedLogs[log.productId] = log
+        });
+        return transformedLogs
+    }
+
+    setProductLogs(productLogs) {
+        this._app.setState({
+            productLogs: productLogs
+        })
     }
 }
 
