@@ -8,6 +8,7 @@ let HandleApiError = require('../Utility/HandleApiError');
 let models = require('../Models');
 let OrderModel = models.OrderModel;
 let ProductLogModel = models.ProductLogModel;
+let StoreModel = models.StoreModel;
 let middlewares = require('../Middlewares');
 let sendEventToSocketNameSpace = require('../Libs/SendEventToNameSpace').sendEventToNameSpace;
 /*
@@ -29,36 +30,41 @@ router.get(basePath, async (req, res) => {
 /*
 * To create new order
 * */
-router.post(basePath, middlewares.storeCheck, middlewares.productCheck, async (req, res) => {
+router.post(basePath, middlewares.storeCheck, async (req, res) => {
     try {
         let body = req.body;
         let storeId = body.storeId;
         let productId = body.productId;
-        let quantity = body.quantity;
+        let products = body.products;
         let order = await OrderModel.createOrder({
             store: storeId,
-            product: productId,
-            quantity: quantity
+            products: products
         });
 
-        let productLog = await ProductLogModel.getProductLog(storeId, productId);
-        if (productLog) {
-            let newQuantity = productLog.quantity + quantity;
-            productLog = await ProductLogModel.updateProductLog(storeId, productId, {
-                quantity: newQuantity
-            })
-        } else {
-           productLog = await ProductLogModel.createProductLog({
-               store: storeId,
-               product: productId,
-               quantity: quantity,
-               produced: 0,
-               prediction: 0
-           })
-        }
+        let arrayOfProductLogPromises = order.products.map(async (productData) => {
+            let productId = productData.productId;
+            let quantity = productData.quantity;
+            let productLog = await ProductLogModel.getProductLog(storeId, productId);
+            if (productLog) {
+                let newQuantity = productLog.quantity + parseInt(quantity);
+                return ProductLogModel.updateProductLog(storeId, productId, {
+                    quantity: newQuantity
+                })
+            } else {
+                return ProductLogModel.createProductLog({
+                    store: storeId,
+                    product: productId,
+                    quantity: quantity,
+                    produced: 0,
+                    prediction: 0
+                })
+            }
+        });
+        await Promise.all(arrayOfProductLogPromises);
+        let store = await StoreModel.getStore(storeId);
         // here socket event
         if (router.io) {
-            sendEventToSocketNameSpace(router.io, productLog.store);
+            sendEventToSocketNameSpace(router.io, store._id);
         }
         res.json({
             success: true,
