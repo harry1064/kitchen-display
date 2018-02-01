@@ -5,8 +5,7 @@ let CustomError = require('../Utility/CustomError');
 let mongoose = require('mongoose');
 let Schema = mongoose.Schema;
 let orderSchema = new Schema({
-    product: {type: Schema.Types.ObjectId, ref: 'Product'},
-    quantity: {type:Number, required: true},
+    products: {type: Array, required: true},
     store: {type: Schema.Types.ObjectId, ref: 'Store'}
 });
 
