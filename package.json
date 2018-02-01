@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "scripts": {
     "build-react-app": "webpack --progress --display-error-details",
+    "build-order-app": "webpack --config webpack.order.config.js --progress --display-error-details",
     "start": "node app.js"
   },
   "dependencies": {
