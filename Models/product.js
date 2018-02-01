@@ -49,4 +49,24 @@ productSchema.statics.createProduct = function (productData) {
     })
 };
 
+productSchema.statics.checkProductForName = function (name) {
+    let model = this;
+    return new Promise((resolve, reject) => {
+       model.find(function(err, docs) {
+           if (err) {
+               reject(err)
+           }
+
+          for (let i =0; i < docs.length; i++) {
+               let doc = docs[i];
+               if( doc.name.replace(' ', '').toLowerCase() === name.replace(' ', '').toLowerCase()) {
+                   resolve(doc);
+                   return;
+               }
+           };
+           resolve()
+       })
+    })
+};
+
 module.exports = mongoose.model('Product', productSchema);
