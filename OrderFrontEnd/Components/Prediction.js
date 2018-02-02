@@ -9,7 +9,7 @@ class Prediction extends React.Component {
     }
 
     _quantityChange(productId, e) {
-        if (e.target.value >= 0) {
+        if (e.target.value > 0) {
             let productLogs = this.props.appStateController.getProductLogs();
 
             if (productLogs[productId]) {

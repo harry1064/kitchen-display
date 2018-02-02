@@ -20,7 +20,7 @@ class AddProduct extends React.Component {
     }
 
     _quantityChange(e) {
-        if (e.target.value >= 0) {
+        if (e.target.value > 0) {
             this.setState({
                 price: e.target.value
             })
